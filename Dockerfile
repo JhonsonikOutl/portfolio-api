@@ -20,12 +20,15 @@ RUN dotnet build src/Portfolio.API/Portfolio.API.csproj -c Release -o /app/build
 # Publish
 RUN dotnet publish src/Portfolio.API/Portfolio.API.csproj -c Release -o /app/publish /p:UseAppHost=false
 
-# Runtime stage - CAMBIAR A .NET 10
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 
+
 # Set environment
-ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_HTTP_PORTS=
+ENV ASPNETCORE_URLS=
+
 EXPOSE 8080
 
 # Copy published files
