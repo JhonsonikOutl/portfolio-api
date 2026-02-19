@@ -94,8 +94,7 @@ namespace Portfolio.API.Extensions
                 {
                     builder.WithOrigins(allowedOrigins)
                            .AllowAnyMethod()
-                           .AllowAnyHeader()
-                           .AllowCredentials();
+                           .AllowAnyHeader();
                 });
             });
 
