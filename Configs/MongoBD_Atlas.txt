@@ -1,0 +1,4 @@
+User: jhonsonik
+Pass: KursumJtCAdAr0uB
+
+mongodb+srv://jhonsonik:KursumJtCAdAr0uB@portfoliomvp.y8uw8wi.mongodb.net/?appName=PortfolioMVP
