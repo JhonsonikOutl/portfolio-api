@@ -29,7 +29,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
@@ -37,5 +37,12 @@ app.MapControllers();
 
 Console.WriteLine("🚀 Portafolio API iniciada correctamente");
 Console.WriteLine("📄 Swagger disponible en: http://localhost:5000/swagger");
+
+app.MapGet("/", () => Results.Ok(new
+{
+    status = "Healthy",
+    message = "Portfolio API is running",
+    timestamp = DateTime.UtcNow
+}));
 
 app.Run();
