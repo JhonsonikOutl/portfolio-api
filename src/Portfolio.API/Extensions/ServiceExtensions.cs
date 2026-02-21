@@ -54,8 +54,17 @@ namespace Portfolio.API.Extensions
             IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["SecretKey"]
-                ?? throw new InvalidOperationException("JWT SecretKey no configurada");
+            var secretKey = configuration["JwtSettings__Secret"]
+                ?? configuration["JwtSettings:Secret"]
+                ?? jwtSettings["SecretKey"]
+                ?? jwtSettings["Secret"]
+                ?? throw new InvalidOperationException("JWT Secret no configurada");
+
+            if (secretKey.Length < 32)
+            {
+                throw new InvalidOperationException(
+                    $"JWT Secret debe tener al menos 32 caracteres para ser segura. Actual: {secretKey.Length}");
+            }
 
             services.AddAuthentication(options =>
             {
@@ -70,8 +79,10 @@ namespace Portfolio.API.Extensions
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings["Issuer"],
-                    ValidAudience = jwtSettings["Audience"],
+                    ValidIssuer = configuration["JwtSettings__Issuer"]
+                        ?? jwtSettings["Issuer"],
+                    ValidAudience = configuration["JwtSettings__Audience"]
+                        ?? jwtSettings["Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(secretKey))
                 };
