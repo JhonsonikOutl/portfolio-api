@@ -81,18 +81,39 @@ namespace Portfolio.Infrastructure.Services
         public string GenerateJwtToken(string userId, string username, string role)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey no configurada");
-            var issuer = jwtSettings["Issuer"] ?? "PortfolioAPI";
-            var audience = jwtSettings["Audience"] ?? "PortfolioWeb";
-            var expirationMinutes = int.Parse(jwtSettings["ExpirationMinutes"] ?? "60");
+
+            var secretKey = _configuration["JwtSettings__Secret"]
+                ?? _configuration["JwtSettings:Secret"]
+                ?? jwtSettings["SecretKey"]
+                ?? jwtSettings["Secret"]
+                ?? throw new InvalidOperationException("JWT Secret no configurada");
+
+            if (secretKey.Length < 32)
+            {
+                throw new InvalidOperationException(
+                    $"JWT Secret debe tener al menos 32 caracteres. Actual: {secretKey.Length}");
+            }
+
+            var issuer = _configuration["JwtSettings__Issuer"]
+                ?? jwtSettings["Issuer"]
+                ?? "PortfolioAPI";
+
+            var audience = _configuration["JwtSettings__Audience"]
+                ?? jwtSettings["Audience"]
+                ?? "PortfolioWeb";
+
+            var expirationMinutes = int.Parse(
+                _configuration["JwtSettings__ExpirationMinutes"]
+                ?? jwtSettings["ExpirationMinutes"]
+                ?? "60");
 
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, userId),
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, role),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+                new Claim(ClaimTypes.NameIdentifier, userId),
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, role),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
