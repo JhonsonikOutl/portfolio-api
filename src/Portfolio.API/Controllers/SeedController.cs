@@ -1,86 +1,38 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Portfolio.Infrastructure.Data;
-using MongoDB.Driver;
+using Portfolio.Application.DTOs.Seed;
+using Portfolio.Application.Interfaces.Services;
 
 namespace Portfolio.API.Controllers
 {
     /// <summary>
-    /// Controller para poblar la base de datos con datos iniciales.
-    /// SOLO DESARROLLO
+    /// Controller para operaciones de seeding de base de datos
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class SeedController : ControllerBase
     {
-        private readonly MongoDbContext _context;
+        private readonly IDatabaseSeedService _seedService;
 
-        public SeedController(MongoDbContext context)
+        public SeedController(IDatabaseSeedService seedService)
         {
-            _context = context;
+            _seedService = seedService;
         }
 
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> SeedDatabase()
         {
-            try
-            {
-                var seeder = new DataSeeder(_context);
-                var result = await seeder.SeedAllAsync();
-
-                return Ok(new
-                {
-                    message = "✅ Base de datos poblada correctamente",
-                    summary = new
-                    {
-                        totalCreated = result.TotalCreated,
-                        message = $"{result.TotalCreated} documentos creados en total"
-                    },
-                    details = new
-                    {
-                        profile = $"{result.ProfileCreated} perfil creado",
-                        skills = $"{result.SkillsCreated} habilidades creadas",
-                        experiences = $"{result.ExperiencesCreated} experiencias laborales creadas",
-                        projects = $"{result.ProjectsCreated} proyectos creados"
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new
-                {
-                    message = "❌ Error al poblar la base de datos",
-                    error = ex.Message
-                });
-            }
+            var result = await _seedService.SeedDatabaseAsync();
+            return Ok(result);
         }
 
         [HttpDelete]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ClearDatabase()
         {
-            try
-            {
-                await _context.Profiles.DeleteManyAsync(_ => true);
-                await _context.Skills.DeleteManyAsync(_ => true);
-                await _context.Experiences.DeleteManyAsync(_ => true);
-                await _context.Projects.DeleteManyAsync(_ => true);
-                await _context.ContactMessages.DeleteManyAsync(_ => true);
-
-                return Ok(new
-                {
-                    message = "✅ Base de datos limpiada (usuarios mantenidos)"
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new
-                {
-                    message = "❌ Error al limpiar la base de datos",
-                    error = ex.Message
-                });
-            }
+            await _seedService.ClearDatabaseAsync();
+            return NoContent();
         }
     }
 }

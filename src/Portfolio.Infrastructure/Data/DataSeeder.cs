@@ -1,6 +1,7 @@
 ﻿using Portfolio.Domain.Entities;
 using Portfolio.Application.DTOs.Seed;
 using MongoDB.Driver;
+using Portfolio.Infrastructure.Mappers;
 
 namespace Portfolio.Infrastructure.Data
 {
@@ -23,6 +24,7 @@ namespace Portfolio.Infrastructure.Data
             var skillsCount = await SeedSkillsAsync();
             var experiencesCount = await SeedExperiencesAsync();
             var projectsCount = await SeedProjectsAsync();
+            var sessionSettingsCount = await SeedSessionSettingsAsync();
 
             Console.WriteLine("✅ Base de datos poblada correctamente con datos de Jonathan Aldana");
 
@@ -31,8 +33,38 @@ namespace Portfolio.Infrastructure.Data
                 ProfileCreated = profileCount,
                 SkillsCreated = skillsCount,
                 ExperiencesCreated = experiencesCount,
-                ProjectsCreated = projectsCount
+                ProjectsCreated = projectsCount,
+                SessionSettingsCreated = sessionSettingsCount
             };
+        }
+
+        private async Task<int> SeedSessionSettingsAsync()
+        {
+            var exists = await _context.SessionSettings.Find(_ => true).AnyAsync();
+
+            if (exists)
+            {
+                Console.WriteLine("✅ SessionSettings ya existe - omitiendo seed");
+                return 0;
+            }
+
+            Console.WriteLine("🌱 Seeding SessionSettings...");
+
+            var entity = new SessionSettings
+            {
+                InactivityTimeoutMinutes = 15,
+                WarningBeforeTimeoutMinutes = 1,
+                IsEnabled = true,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            var model = SessionSettingsMapper.ToModel(entity);
+
+            await _context.SessionSettings.InsertOneAsync(model);
+
+            Console.WriteLine("✅ SessionSettings seeded successfully");
+
+            return 1;
         }
 
         private async Task<int> SeedSkillsAsync()

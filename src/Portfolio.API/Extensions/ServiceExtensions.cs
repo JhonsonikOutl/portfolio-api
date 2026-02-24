@@ -35,6 +35,8 @@ namespace Portfolio.API.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddScoped<IEducationRepository, EducationRepository>();
+            services.AddScoped<ISessionSettingsRepository, SessionSettingsRepository>();
+            services.AddScoped<IDatabaseSeedRepository, DatabaseSeedRepository>();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IProjectService, ProjectService>();
@@ -43,6 +45,8 @@ namespace Portfolio.API.Extensions
             services.AddScoped<IContactService, ContactService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ICvGeneratorService, CvGeneratorService>();
+            services.AddScoped<ISessionSettingsService, SessionSettingsService>();
+            services.AddScoped<IDatabaseSeedService, DatabaseSeedService>();
 
             QuestPDF.Settings.License = LicenseType.Community;
 
@@ -137,19 +141,19 @@ namespace Portfolio.API.Extensions
                 });
 
                 options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-        {
-            {
-                new Microsoft.OpenApi.Models.OpenApiSecurityScheme
                 {
-                    Reference = new Microsoft.OpenApi.Models.OpenApiReference
                     {
-                        Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                        Id = "Bearer"
+                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                        {
+                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                            {
+                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
                     }
-                },
-                Array.Empty<string>()
-            }
-        });
+                });
             });
 
             return services;

@@ -51,5 +51,8 @@ namespace Portfolio.Infrastructure.Data
 
         public IMongoCollection<Education> Educations =>
             _database.GetCollection<Education>("education");
+
+        public IMongoCollection<SessionSettings> SessionSettings =>
+            _database.GetCollection<SessionSettings>("sessionSettings");
     }
 }
