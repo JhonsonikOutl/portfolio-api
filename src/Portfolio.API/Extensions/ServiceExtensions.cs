@@ -47,6 +47,7 @@ namespace Portfolio.API.Extensions
             services.AddScoped<ICvGeneratorService, CvGeneratorService>();
             services.AddScoped<ISessionSettingsService, SessionSettingsService>();
             services.AddScoped<IDatabaseSeedService, DatabaseSeedService>();
+            services.AddScoped<IEducationService, EducationService>();
 
             QuestPDF.Settings.License = LicenseType.Community;
 

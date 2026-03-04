@@ -2,12 +2,9 @@
 
 namespace Portfolio.Application.Interfaces.Repositories
 {
-    public interface IEducationRepository
+    public interface IEducationRepository : IRepository<Education>
     {
-        Task<IEnumerable<Education>> GetAllAsync();
-        Task<Education?> GetByIdAsync(string id);
-        Task<Education> CreateAsync(Education education);
-        Task<Education?> UpdateAsync(string id, Education education);
-        Task<bool> DeleteAsync(string id);
+        Task<IEnumerable<Education>> GetAllOrderedAsync();
+        Task<IEnumerable<Education>> GetCurrentEducationsAsync();
     }
 }
