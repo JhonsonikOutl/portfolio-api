@@ -16,7 +16,3 @@ namespace Portfolio.Application.DTOs.Project
         public int DisplayOrder { get; set; }
     }
 }
-
-public class UpdateProjectDto : CreateProjectDto
-{
-}

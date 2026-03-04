@@ -1,7 +1,8 @@
-﻿namespace Portfolio.Domain.Entities
+﻿namespace Portfolio.Application.DTOs.Education
 {
-    public class Education : BaseEntity
+    public class EducationDto
     {
+        public Guid? Id { get; set; }
         public string Institution { get; set; } = string.Empty;
         public string Degree { get; set; } = string.Empty;
         public string FieldOfStudy { get; set; } = string.Empty;

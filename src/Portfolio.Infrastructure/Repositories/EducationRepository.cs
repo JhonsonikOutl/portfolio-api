@@ -5,42 +5,37 @@ using Portfolio.Infrastructure.Data;
 
 namespace Portfolio.Infrastructure.Repositories
 {
-    public class EducationRepository : IEducationRepository
+    /// <summary>
+    /// Repositorio específico para educación.
+    /// Hereda de Repository<Education> (tiene CRUD básico).
+    /// Implementa IEducationRepository (métodos específicos).
+    /// </summary>
+    public class EducationRepository : Repository<Education>, IEducationRepository
     {
-        private readonly IMongoCollection<Education> _collection;
-
         public EducationRepository(MongoDbContext context)
+            : base(context.Educations)
         {
-            _collection = context.Educations;
         }
 
-        public async Task<IEnumerable<Education>> GetAllAsync()
+        public async Task<IEnumerable<Education>> GetAllOrderedAsync()
         {
-            return await _collection.Find(_ => true).ToListAsync();
+            var sortDefinition = Builders<Education>.Sort.Ascending(e => e.DisplayOrder);
+
+            return await _collection
+                .Find(_ => true)
+                .Sort(sortDefinition)
+                .ToListAsync();
         }
 
-        public async Task<Education?> GetByIdAsync(string id)
+        public async Task<IEnumerable<Education>> GetCurrentEducationsAsync()
         {
-            return await _collection.Find(e => e.Id == id).FirstOrDefaultAsync();
-        }
+            var filter = Builders<Education>.Filter.Eq(e => e.IsCurrentlyStudying, true);
+            var sortDefinition = Builders<Education>.Sort.Ascending(e => e.DisplayOrder);
 
-        public async Task<Education> CreateAsync(Education education)
-        {
-            await _collection.InsertOneAsync(education);
-            return education;
-        }
-
-        public async Task<Education?> UpdateAsync(string id, Education education)
-        {
-            education.Id = id;
-            var result = await _collection.ReplaceOneAsync(e => e.Id == id, education);
-            return result.ModifiedCount > 0 ? education : null;
-        }
-
-        public async Task<bool> DeleteAsync(string id)
-        {
-            var result = await _collection.DeleteOneAsync(e => e.Id == id);
-            return result.DeletedCount > 0;
+            return await _collection
+                .Find(filter)
+                .Sort(sortDefinition)
+                .ToListAsync();
         }
     }
 }
