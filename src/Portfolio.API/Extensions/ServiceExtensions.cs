@@ -37,6 +37,7 @@ namespace Portfolio.API.Extensions
             services.AddScoped<IEducationRepository, EducationRepository>();
             services.AddScoped<ISessionSettingsRepository, SessionSettingsRepository>();
             services.AddScoped<IDatabaseSeedRepository, DatabaseSeedRepository>();
+            services.AddScoped<IContactAuditRepository, ContactAuditRepository>();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IProjectService, ProjectService>();
@@ -48,6 +49,10 @@ namespace Portfolio.API.Extensions
             services.AddScoped<ISessionSettingsService, SessionSettingsService>();
             services.AddScoped<IDatabaseSeedService, DatabaseSeedService>();
             services.AddScoped<IEducationService, EducationService>();
+            services.AddScoped<IEmailApplicationService, EmailApplicationService>();
+            services.AddScoped<IEmailService, SendGridEmailService>();
+            services.AddScoped<IContactAuditService, ContactAuditService>();
+
 
             QuestPDF.Settings.License = LicenseType.Community;
 

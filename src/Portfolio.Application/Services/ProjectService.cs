@@ -56,7 +56,8 @@ namespace Portfolio.Application.Services
                 StartDate = createDto.StartDate,
                 EndDate = createDto.EndDate,
                 IsFeatured = createDto.IsFeatured,
-                DisplayOrder = createDto.DisplayOrder
+                DisplayOrder = createDto.DisplayOrder,
+                Show = createDto.Show,
             };
 
             var created = await _projectRepository.CreateAsync(project);
@@ -82,6 +83,7 @@ namespace Portfolio.Application.Services
             existing.EndDate = updateDto.EndDate;
             existing.IsFeatured = updateDto.IsFeatured;
             existing.DisplayOrder = updateDto.DisplayOrder;
+            existing.Show = updateDto.Show;
 
             return await _projectRepository.UpdateAsync(id, existing);
         }
@@ -105,7 +107,8 @@ namespace Portfolio.Application.Services
                 StartDate = project.StartDate,
                 EndDate = project.EndDate,
                 IsFeatured = project.IsFeatured,
-                DisplayOrder = project.DisplayOrder
+                DisplayOrder = project.DisplayOrder,
+                Show = project.Show
             };
         }
     }

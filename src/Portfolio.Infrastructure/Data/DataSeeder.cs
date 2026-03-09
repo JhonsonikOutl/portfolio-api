@@ -438,7 +438,8 @@ namespace Portfolio.Infrastructure.Data
                 StartDate = new DateTime(2026, 2, 16),
                 EndDate = null,
                 IsFeatured = true,
-                DisplayOrder = 1
+                DisplayOrder = 1,
+                Show = false
             },
             new Project
             {
@@ -456,7 +457,8 @@ namespace Portfolio.Infrastructure.Data
                 StartDate = new DateTime(2023, 1, 1),
                 EndDate = new DateTime(2023, 12, 31),
                 IsFeatured = true,
-                DisplayOrder = 2
+                DisplayOrder = 2,
+                Show = false
             },
             new Project
             {
@@ -474,7 +476,8 @@ namespace Portfolio.Infrastructure.Data
                 StartDate = new DateTime(2024, 3, 1),
                 EndDate = new DateTime(2024, 8, 31),
                 IsFeatured = true,
-                DisplayOrder = 3
+                DisplayOrder = 3,
+                Show = false
             }
         };
 

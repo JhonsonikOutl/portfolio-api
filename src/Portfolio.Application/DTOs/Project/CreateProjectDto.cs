@@ -1,6 +1,4 @@
-﻿using Portfolio.Application.DTOs.Project;
-
-namespace Portfolio.Application.DTOs.Project
+﻿namespace Portfolio.Application.DTOs.Project
 {
     public class CreateProjectDto
     {
@@ -14,5 +12,6 @@ namespace Portfolio.Application.DTOs.Project
         public DateTime? EndDate { get; set; }
         public bool IsFeatured { get; set; }
         public int DisplayOrder { get; set; }
+        public bool Show { get; set; }
     }
 }

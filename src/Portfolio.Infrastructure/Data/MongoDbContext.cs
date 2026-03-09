@@ -54,5 +54,8 @@ namespace Portfolio.Infrastructure.Data
 
         public IMongoCollection<SessionSettings> SessionSettings =>
             _database.GetCollection<SessionSettings>("sessionSettings");
+
+        public IMongoCollection<ContactAudit> ContactAudits =>
+            _database.GetCollection<ContactAudit>("contactAudits");
     }
 }
