@@ -50,7 +50,7 @@ namespace Portfolio.API.Controllers
         public async Task<IActionResult> Create([FromBody] CreateContactMessageDto createDto)
         {
             var message = await _contactService.CreateMessageAsync(createDto);
-            return CreatedAtAction(nameof(GetById), new { id = message.Id }, message);
+            return CreatedAtAction(nameof(GetById), new { id = message.Id }, new { radicateNumber = message.RadicateNumber });
         }
 
         [HttpPatch("{id}/read")]

@@ -1,17 +1,28 @@
 ﻿using Portfolio.Application.DTOs.Contact;
+using Portfolio.Application.Helpers;
 using Portfolio.Application.Interfaces.Repositories;
 using Portfolio.Application.Interfaces.Services;
 using Portfolio.Domain.Entities;
 
 namespace Portfolio.Application.Services
 {
+    /// <summary>
+    /// Servicio de lógica de negocio para mensajes de contacto.
+    /// </summary>
     public class ContactService : IContactService
     {
         private readonly IContactRepository _contactRepository;
+        private readonly IEmailService _emailService;
+        private readonly IContactAuditService _contactAuditService;
 
-        public ContactService(IContactRepository contactRepository)
+        public ContactService(
+            IContactRepository contactRepository,
+            IEmailService emailService,
+            IContactAuditService contactAuditService)
         {
             _contactRepository = contactRepository;
+            _emailService = emailService;
+            _contactAuditService = contactAuditService;
         }
 
         public async Task<IEnumerable<ContactMessageDto>> GetAllMessagesAsync()
@@ -41,11 +52,31 @@ namespace Portfolio.Application.Services
                 Email = createDto.Email,
                 Subject = createDto.Subject,
                 Message = createDto.Message,
+                RadicateNumber = createDto.RadicateNumber,
                 IsRead = false
             };
 
             var created = await _contactRepository.CreateAsync(message);
-            return MapToDto(created);
+
+            var radicateNumber = await _contactAuditService.GenerateRadicateAsync(created.Id);
+
+            var confirmationBody = EmailTemplateHelper.GenerateConfirmationTemplate(
+                recipientName: created.Name,
+                subject: created.Subject,
+                radicate : radicateNumber
+            );
+
+            await _emailService.SendEmailAsync(
+                to: created.Email,
+                subject: "He recibido tu mensaje",
+                body: confirmationBody,
+                isHtml: true
+            );
+
+            var dto = MapToDto(created);
+            dto.RadicateNumber = radicateNumber;
+
+            return dto;
         }
 
         public async Task<bool> MarkAsReadAsync(Guid id)

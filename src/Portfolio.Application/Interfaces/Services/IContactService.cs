@@ -2,6 +2,9 @@
 
 namespace Portfolio.Application.Interfaces.Services
 {
+    /// <summary>
+    /// Servicio para lógica de negocio de mensajes de contacto.
+    /// </summary>
     public interface IContactService
     {
         Task<IEnumerable<ContactMessageDto>> GetAllMessagesAsync();

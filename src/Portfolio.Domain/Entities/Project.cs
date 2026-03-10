@@ -12,5 +12,6 @@
         public DateTime? EndDate { get; set; }
         public bool IsFeatured { get; set; }
         public int DisplayOrder { get; set; }
+        public bool Show { get; set; }
     }
 }
