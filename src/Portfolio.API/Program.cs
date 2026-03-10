@@ -3,7 +3,10 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar puerto dinámico para Railway
+// ============================================
+// CONFIGURAR PUERTO DINÁMICO PARA RAILWAY
+// ============================================
+
 if (!builder.Environment.IsDevelopment())
 {
     var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
@@ -19,35 +22,59 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
+
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCorsPolicy(builder.Configuration);
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocumentation();
+
+// NUEVO
+builder.Services.AddHealthChecks();
+builder.Services.AddApiRateLimiter();
+
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
 // ============================================
-// CONFIGURACIÓN DEL PIPELINE HTTP
+// MIDDLEWARE GLOBAL
+// ============================================
+
+app.UseDeveloperExceptionPage();
+
+// ============================================
+// SWAGGER
 // ============================================
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseHttpsRedirection();
     app.UseSwagger();
+
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mi API v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Portfolio API v1 - Dev");
     });
 }
 
+// ============================================
+// PIPELINE HTTP
+// ============================================
+
 app.UseCors("AllowAngular");
+
+app.UseRateLimiter();
+
 app.UseAuthentication();
+
 app.UseAuthorization();
+
+// ============================================
+// ENDPOINTS
+// ============================================
+
 app.MapControllers();
 
-Console.WriteLine("🚀 Portafolio API iniciada correctamente");
-Console.WriteLine("📄 Swagger disponible en: http://localhost:5000/swagger");
+app.MapHealthChecks("/health");
 
 app.MapGet("/", () => Results.Ok(new
 {
@@ -55,5 +82,7 @@ app.MapGet("/", () => Results.Ok(new
     message = "Portfolio API is running",
     timestamp = DateTime.UtcNow
 }));
+
+Console.WriteLine("🚀 Portfolio API iniciada correctamente");
 
 app.Run();
